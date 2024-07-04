@@ -16,5 +16,7 @@ llm = HuggingFaceEndpoint(
     do_sample=False,
 )
 response=llm.invoke("what is the capital of india")
-
-print(response)
+wrapped_text = textwrap.fill(
+    response, width=100, break_long_words=False, replace_whitespace=False
+)
+print(wrapped_text)
