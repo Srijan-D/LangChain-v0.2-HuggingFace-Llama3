@@ -4,16 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Query Form</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Query Form</h1>
-    <form id="queryForm">
+    <form id="queryForm" action="/query" method="POST">
+      <h1>Query Form</h1>
       <label for="query">Enter your query:</label>
       <input type="text" id="query" name="query" required />
       <button type="submit">Submit</button>
     </form>
-    <h2>Response:</h2>
-    <pre id="response"></pre>
+    <pre id="response">
+      <h2>Response:</h2>
+
+    </pre>
+    <!-- <pre id="response">{{ response }}</pre> can also be passed as variable from flask directly -->
 
     <script src="index.js"></script>
   </body>
