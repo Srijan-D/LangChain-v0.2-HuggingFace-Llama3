@@ -16,9 +16,19 @@ document.getElementById('queryForm').addEventListener('submit', async (e) => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
+        const result = await response.text(); //data is being passed as plain text / string from flask backend
 
-        const result = await response.text();
-        responseElement.textContent = result;
+        // Clear previous response
+        responseElement.innerHTML = '';
+
+        // Create and append the <h2> element
+        const responseTitle = document.createElement('h2');
+        responseTitle.textContent = 'Response:';
+
+        responseElement.innerHTML = ''; // Clear previous response
+        responseElement.appendChild(responseTitle); // Add the <h2> inside <pre>
+        responseElement.appendChild(document.createTextNode(result));
+
     } catch (error) {
         responseElement.textContent = 'Error: ' + error.message;
     }
