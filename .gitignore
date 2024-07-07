@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 
 # environment variables
-.env*
+.env
 myenv/
 
 
