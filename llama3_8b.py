@@ -4,23 +4,34 @@ from dotenv import load_dotenv, find_dotenv
 from langchain_huggingface import HuggingFaceEndpoint
 import textwrap
 
+from langchain_core.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain_core.prompts import PromptTemplate
+
+prompt_template = PromptTemplate.from_template("Tell me a joke about {topic}")
+
+prompt_template.invoke({"topic": "cats"})
+
+
 app = Flask(__name__, static_url_path='', static_folder='.')
 
 load_dotenv(find_dotenv())  # Load environment variables
 
 HUGGINGFACEHUB_API_TOKEN = os.environ["HUGGINGFACEHUB_API_TOKEN"]
 # Get your token from here: https://huggingface.co/settings/tokens and set it in the .env file
+callbacks = [StreamingStdOutCallbackHandler()]
 
 llm = HuggingFaceEndpoint(
-    repo_id="meta-llama/Meta-Llama-3-8B-Instruct",
-    task="text-generation",
-    max_new_tokens=300,
-    do_sample=False,
-    top_k = 40,
-    top_p = 0.9,
-    temperature = 0.7,
-    huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN
-)
+                repo_id="meta-llama/Meta-Llama-3-8B-Instruct",
+                max_new_tokens=300,
+                top_k=10,
+                top_p=0.95,
+                typical_p=0.95,
+                temperature=0.01,
+                repetition_penalty=1.03,
+                callbacks=callbacks,
+                streaming=True,
+                huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN
+            )          
 
 @app.route('/')
 def index():
