@@ -1,16 +1,14 @@
 import os
+import textwrap
 from flask import Flask, request, jsonify, send_from_directory
 from dotenv import load_dotenv, find_dotenv
 from langchain_huggingface import HuggingFaceEndpoint
-import textwrap
+
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
 
 from langchain_core.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain_core.prompts import PromptTemplate
-
-prompt_template = PromptTemplate.from_template("Tell me a joke about {topic}")
-
-prompt_template.invoke({"topic": "cats"})
-
 
 app = Flask(__name__, static_url_path='', static_folder='.')
 
@@ -46,7 +44,13 @@ def query():
         return jsonify({'error': 'No query provided'}), 400
 
     try:
-        response = llm.invoke(query)
+        prompt_template = "Start each answer with saying I am an ai assistant: {query}"
+        
+        prompt = PromptTemplate(input_variables=["query"], template=prompt_template)
+        # print("Prompt: ", prompt)
+        chain = prompt | llm | StrOutputParser()
+        # print("Chain: ", chain)
+        response = chain.invoke(query)
         wrapped_text = textwrap.fill(response, width=100, break_long_words=False, replace_whitespace=False)
         #  return render_template_string(open('index.html').read(), response=wrapped_text) # This is a bad idea as template can be huge but it is used to pass the response as a variable to the template(html)
         return wrapped_text
