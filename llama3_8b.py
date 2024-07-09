@@ -10,7 +10,11 @@ from langchain_huggingface import HuggingFaceEndpoint
 from langchain_core.output_parsers import StrOutputParser
 
 # prompt template to the llm
-from langchain_core.prompts import PromptTemplate
+from langchain_core.prompts import (
+    PromptTemplate,
+    ChatPromptTemplate,
+    MessagesPlaceholder,
+)
 
 # implementing streaming stdout callback handler
 from langchain_core.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
@@ -84,31 +88,32 @@ def query():
 
     try:
         # langChain code
-        prompt_template = "Start answering the query with saying `I am an AI assistant here is your answer`: {query}"
-        prompt = PromptTemplate(input_variables=["query"], template=prompt_template)
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "You're an assistant who's good at giving breif answers to questions.",
+                ),
+                MessagesPlaceholder(variable_name="history"),
+                ("human", "{question}"),
+            ]
+        )
 
-        # chain = prompt | llm | StrOutputParser()
-        chain = prompt | llm
-        # response = chain.invoke(query)
+        chain = prompt | llm | StrOutputParser()
 
         chain_with_history = RunnableWithMessageHistory(
             chain,
             get_by_session_id,
+            input_messages_key="question",
+            history_messages_key="history",
         )
-        print("chain_with_history", chain_with_history)
 
-        response = chain_with_history.invoke(  # noqa: T201
-            {"ability": "math", "question": "What does cosine mean?"},
+        print("*********************************")
+        response = chain_with_history.invoke(
+            {"question": query},
             config={"configurable": {"session_id": "1"}},
         )
-
-        # # print("message_history",with_message_history)
-        # config = {"configurable": {"session_id": "abc2"}}
-        # # print("config")
-
-        # # print("****RESPONSE>CONTENT****",chain_with_history)
-        # response=chain_with_history.invoke(query, config=config)
-        # print("****RESPONSE>CONTENT****",response.content)
+        print("response", response)
 
         wrapped_text = textwrap.fill(
             response, width=100, break_long_words=False, replace_whitespace=False
