@@ -41,7 +41,7 @@ callbacks = [StreamingStdOutCallbackHandler()]
 # HuggingFace Serverless Inference API link: https://huggingface.co/docs/api-inference/en/index
 llm = HuggingFaceEndpoint(
     repo_id="meta-llama/Meta-Llama-3-8B-Instruct",
-    max_new_tokens=320,
+    max_new_tokens=100,  # change this according to your requirement
     top_k=10,
     top_p=0.95,
     typical_p=0.95,
@@ -109,8 +109,9 @@ def query():
         )
 
         print("*********************************")
+
         response = chain_with_history.invoke(
-            {"question": query},
+            {"question": query, "history": history},
             config={"configurable": {"session_id": "1"}},
         )
         print("response", response)
@@ -118,7 +119,7 @@ def query():
         wrapped_text = textwrap.fill(
             response, width=100, break_long_words=False, replace_whitespace=False
         )
-        #  return render_template_string(open('index.html').read(), response=wrapped_text) # This is a bad idea as template can be huge but it is used to pass the response as a variable to the template(html)
+
         return wrapped_text
 
     except Exception as e:
