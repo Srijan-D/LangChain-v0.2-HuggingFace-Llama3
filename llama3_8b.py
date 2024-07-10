@@ -28,7 +28,12 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.messages import BaseMessage, AIMessage
 
 # Flask app simply to serve the index.html file and handle the POST request
-app = Flask(__name__, static_url_path="", static_folder=".")
+app = Flask(
+    __name__,
+    static_url_path="/static",
+    static_folder="static",
+    template_folder="templates",
+)
 
 load_dotenv(find_dotenv())
 
@@ -119,7 +124,7 @@ def query():
         wrapped_text = textwrap.fill(
             response, width=100, break_long_words=False, replace_whitespace=False
         )
-
+        #  return render_template_string(open('index.html').read(), response=wrapped_text) # This is a bad idea as template can be huge but it is used to pass the response as a variable to the template(html)
         return wrapped_text
 
     except Exception as e:

@@ -1,6 +1,4 @@
 # This is the entire LangChain v0.2 code snippet, without any frontend or flask setup. Change the harcoded question to get response from the llm
-
-
 import os
 import textwrap
 from flask import Flask, request, jsonify, send_from_directory

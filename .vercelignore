@@ -1,0 +1,10 @@
+# .vercelignore
+
+**pycache**/
+myenv/
+.git/
+.env
+.env.local
+.gitignore
+README.md
+test.py
