@@ -35,6 +35,7 @@ app = Flask(
     template_folder="templates",
 )
 
+
 load_dotenv(find_dotenv())
 
 HUGGINGFACEHUB_API_TOKEN = os.environ["HUGGINGFACEHUB_API_TOKEN"]
@@ -112,12 +113,13 @@ def query():
             input_messages_key="question",
             history_messages_key="history",
         )
+        #  Define a RunnableConfig object, with a `configurable` key.
+        config = {"configurable": {"session_id": "1"}}
 
         print("*********************************")
 
         response = chain_with_history.invoke(
-            {"question": query, "history": history},
-            config={"configurable": {"session_id": "1"}},
+            {"question": query, "history": history}, config=config
         )
         print("response", response)
 

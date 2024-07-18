@@ -81,9 +81,12 @@ chain_with_history = RunnableWithMessageHistory(
 
 print("*********************************")
 
+#  Define a RunnableConfig object, with a `configurable` key.
+config = {"configurable": {"session_id": "1"}}
+
 response = chain_with_history.invoke(
     {"ability": "math", "question": "what is the cosine formula?"},
-    config={"configurable": {"session_id": "1"}},
+    config=config,
 )
 
 print("response", response)
