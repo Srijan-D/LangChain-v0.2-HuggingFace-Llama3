@@ -127,7 +127,12 @@ def query():
             response, width=100, break_long_words=False, replace_whitespace=False
         )
         #  return render_template_string(open('index.html').read(), response=wrapped_text) # This is a bad idea as template can be huge but it is used to pass the response as a variable to the template(html)
-        return wrapped_text
+        parsed_response = response.split("\nHuman:")[0].strip()
+
+        # Format the final response
+        final_response = f"Human: {query}\nAI: {parsed_response}"
+
+        return {final_response}
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
